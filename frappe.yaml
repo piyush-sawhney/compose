@@ -1,0 +1,76 @@
+services:
+  frontend:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik-public
+      - bench-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.services.${ROUTER?ROUTER not set}.loadbalancer.server.port=8080"
+      - "traefik.http.routers.${ROUTER}-https.rule=Host(\`${SITES?SITES not set}\`)"
+      - "traefik.http.routers.${ROUTER}-https.entrypoints=websecure"
+      - "traefik.http.routers.${ROUTER}-https.tls=true"
+      - "traefik.http.routers.${ROUTER}-https.service=${ROUTER}"
+      - "traefik.http.routers.${ROUTER}-https.tls.certresolver=${CERT_RESOLVER}"
+      - "traefik.http.routers.${ROUTER}-https.middlewares=${MIDDLEWARES}"
+
+  configurator:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+  backend:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - mariadb-network
+      - bench-network
+  websocket:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+  scheduler:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+  queue-short:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+  queue-long:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+  redis-cache:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+
+  redis-queue:
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - bench-network
+      - mariadb-network
+
+networks:
+  traefik-public:
+    external: true
+  mariadb-network:
+    external: true
+  bench-network:
+    name: ${ROUTER}
+    external: false
