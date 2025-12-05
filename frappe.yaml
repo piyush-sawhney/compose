@@ -14,8 +14,6 @@ services:
       - "traefik.http.routers.${ROUTER}-https.tls=true"
       - "traefik.http.routers.${ROUTER}-https.service=${ROUTER}"
       - "traefik.http.routers.${ROUTER}-https.tls.certresolver=${CERT_RESOLVER}"
-      - "traefik.http.routers.${ROUTER}-https.middlewares=${MIDDLEWARES}"
-
   configurator:
     security_opt:
       - no-new-privileges:true
